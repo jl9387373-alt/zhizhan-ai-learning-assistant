@@ -1,0 +1,79 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 5000,
+    "debug": true
+  },
+  "storage": {
+    "data_dir": "data",
+    "auto_save": true
+  },
+  "agents": {
+    "qa": {
+      "confidence_threshold": 0.5,
+      "max_history": 1000
+    },
+    "planner": {
+      "default_duration": "4周",
+      "supported_durations": [
+        "4周",
+        "6周",
+        "8周",
+        "12周"
+      ]
+    },
+    "resource": {
+      "default_count": 5,
+      "max_count": 20
+    }
+  },
+  "ui": {
+    "theme": "default",
+    "language": "zh-CN"
+  },
+  "rag": {
+    "enabled": true,
+    "top_k": 4,
+    "model_name": "deepseek-v4-flash",
+    "model_provider": "openai",
+    "api_key": "",
+    "hf_endpoint": "https://hf-mirror.com",
+    "base_url": "https://myai.bupt.edu.cn/llm-gw/v1",
+    "embedding_model": "bge-m3",
+    "embedding_provider": "openai",
+    "persist_dir": "data/vector_store",
+    "chunk_size": 600,
+    "chunk_overlap": 100,
+    "score_threshold": 0.3,
+    "keyword_search_enabled": true,
+    "keyword_weight": 0.3,
+    "vector_weight": 0.7,
+    "enable_tfidf": true,
+    "enable_dynamic_chunking": true,
+    "auto_enrich_knowledge": true,
+    "min_content_length": 50,
+    "hybrid_search_enabled": true,
+    "pdf_boost": 0.5,
+    "subject_match_boost": 0.2,
+    "query_match_boost": 0.3,
+    "enable_rerank": false,
+    "enable_query_expansion": true,
+    "enable_context_compression": true,
+    "max_context_length": 4000,
+    "diversity_threshold": 0.3,
+    "rerank_top_k": 8,
+    "excluded_files": [
+      "urls.txt",
+      "C++.pdf"
+    ],
+    "cache_size": 100,
+    "request_timeout": 30,
+    "llm_timeout": 20
+  },
+  "write_to_long_term_memory": true,
+  "modules": {
+    "rag": {},
+    "storage": {},
+    "nlp": {}
+  }
+}

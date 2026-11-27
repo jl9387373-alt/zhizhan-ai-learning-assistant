@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 多Agent智能学习助理</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>创建新账户</h2>
+            <div id="error-message" class="error-message"></div>
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="account">账号</label>
+                    <input type="text" id="account" name="account" required placeholder="请输入邮箱或手机号">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required placeholder="请输入密码">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">确认密码</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required placeholder="请再次输入密码">
+                </div>
+                <button type="submit" class="primary-btn auth-btn">注册</button>
+            </form>
+            <div class="auth-links">
+                已有账号？ <a href="login.html">立即登录</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const account = document.getElementById('account').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const errorDiv = document.getElementById('error-message');
+            
+            if (password !== confirmPassword) {
+                errorDiv.textContent = '两次输入的密码不一致';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ account, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    errorDiv.textContent = '注册成功，正在跳转到登录页...';
+                    errorDiv.style.display = 'block';
+                    errorDiv.style.color = '#1f9d55';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 900);
+                } else {
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.display = 'block';
+                    errorDiv.style.color = '';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                errorDiv.textContent = '注册请求失败，请稍后重试';
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = '';
+            }
+        });
+    </script>
+</body>
+</html>

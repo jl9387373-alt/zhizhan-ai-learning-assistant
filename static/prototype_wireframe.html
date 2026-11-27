@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习助手 · 产品原型设计（低保真线框 v2）</title>
+<style>
+  :root{
+    --ink:#2f3542; --muted:#7a828e; --line:#b9c0c9; --dash:#c9d0d8;
+    --fill:#eceff3; --fill2:#e3e7ec; --paper:#ffffff; --stage:#f4f6f8;
+    --mark:#d64545; --markbg:#fdecec; --blue:#3d6fb4; --bluebg:#eaf1fb;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--stage);color:var(--ink);line-height:1.5;padding:32px 20px 60px}
+  .board{max-width:1180px;margin:0 auto}
+  .hero{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 30px;margin-bottom:22px;box-shadow:0 2px 10px rgba(30,40,60,.05)}
+  .hero h1{font-size:23px;letter-spacing:.5px}
+  .hero .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .tag{font-size:12px;padding:4px 11px;border:1px solid var(--line);border-radius:20px;color:var(--muted);background:#fafbfc}
+  .tag b{color:var(--ink);font-weight:600}
+  .sec-title{display:flex;align-items:center;gap:10px;margin:30px 4px 14px}
+  .sec-title .no{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .sec-title h2{font-size:17px}
+  .sec-title .desc{font-size:12px;color:var(--muted);margin-left:auto}
+
+  /* 信息架构 */
+  .ia{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:24px;box-shadow:0 2px 10px rgba(30,40,60,.05)}
+  .ia-root{display:inline-block;border:1.5px solid var(--ink);border-radius:6px;padding:10px 20px;font-size:14px;font-weight:600;background:#fff}
+  .ia-line{height:22px;border-left:1.5px dashed var(--line);width:0;margin:0 auto}
+  .ia-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;position:relative}
+  .ia-row::before{content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:74%;height:1.5px;border-top:1.5px dashed var(--line)}
+  .ia-node{border:1.5px solid var(--line);border-radius:6px;padding:9px 13px;font-size:13px;background:#fbfcfd;min-width:126px;text-align:center}
+  .ia-node.hot{border-color:var(--blue);background:var(--bluebg)}
+  .ia-node small{display:block;color:var(--muted);font-size:10.5px;margin-top:3px;line-height:1.35}
+  .ia-entry{margin-top:20px;border-top:1px dashed var(--line);padding-top:14px;font-size:11.5px;color:var(--muted);line-height:1.9}
+  .ia-entry b{color:var(--ink)}
+
+  /* 线框网格 */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .frame{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(30,40,60,.05)}
+  .frame-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#eef1f4;border-bottom:1px solid var(--line)}
+  .frame-bar .dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .frame-bar .name{font-size:12px;color:var(--muted);margin-left:6px}
+  .frame-bar .pno{margin-left:auto;font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:10px;padding:2px 9px}
+  .ui{padding:16px;background:#fafbfc;min-height:440px}
+  .ui-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px}
+  .logo{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}
+  .logo .sq{width:16px;height:16px;background:var(--fill2);border:1px solid var(--line);border-radius:4px}
+  .avatar{width:22px;height:22px;border-radius:50%;background:var(--fill2);border:1px solid var(--line)}
+  .ln{height:9px;background:var(--fill2);border-radius:3px}
+  .ln.s{width:40%}.ln.m{width:65%}.ln.l{width:85%}
+
+  /* 统一导航（每页都有） */
+  .gnav{display:flex;gap:5px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px;overflow-x:auto}
+  .gnav span{font-size:10px;padding:5px 9px;border:1px solid var(--line);border-radius:4px;color:var(--muted);white-space:nowrap;background:#fff}
+  .gnav span.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* 首页 */
+  .notice{display:flex;align-items:center;gap:9px;border:1px dashed var(--dash);background:#fff;border-radius:6px;padding:9px 11px;font-size:11px;color:var(--muted);margin-bottom:12px}
+  .notice .bell{width:16px;height:16px;border-radius:50%;background:var(--fill2)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+  .kpi{border:1px solid var(--line);border-radius:6px;padding:10px 8px;text-align:center;background:#fff}
+  .kpi .ic{width:20px;height:20px;background:var(--fill2);border-radius:4px;margin:0 auto 7px}
+  .kpi .v{font-size:16px;font-weight:600}
+  .kpi .t{font-size:10px;color:var(--muted);margin-top:2px}
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .mini{border:1px solid var(--line);border-radius:6px;padding:10px;background:#fff}
+  .mini .ln{margin-bottom:6px}
+  .btn-wire{border:1px solid var(--line);background:var(--fill);border-radius:4px;padding:5px 8px;font-size:10px;text-align:center;color:var(--muted)}
+
+  /* 计划生成 */
+  .gen-field{margin-bottom:10px}
+  .gen-label{font-size:10px;color:var(--muted);margin-bottom:4px}
+  .gen-input{border:1px solid var(--line);border-radius:5px;height:32px;display:flex;align-items:center;padding:0 10px;font-size:11px;background:#fff;color:var(--muted)}
+  .gen-opts{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+  .gen-opt{font-size:10px;padding:5px 12px;border:1px solid var(--line);border-radius:4px;background:#fff}
+  .gen-opt.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .gen-btn{background:var(--ink);color:#fff;text-align:center;padding:9px;font-size:11px;border-radius:5px;margin-top:4px}
+  .gen-progress{border:1px dashed var(--line);border-radius:5px;padding:11px;text-align:center;font-size:11px;color:var(--muted);margin:10px 0;background:#fff}
+  .gen-preview{border:1px solid var(--line);border-radius:5px;padding:10px;margin-top:10px;background:#fff}
+  .gen-preview .pt{font-size:10px;color:var(--muted);margin-bottom:7px}
+  .gen-row{display:flex;align-items:center;gap:8px;border-bottom:1px dashed var(--dash);padding:6px 2px;font-size:11px}
+  .gen-row .ed{margin-left:auto;font-size:10px;color:var(--blue)}
+  .gen-actions{display:flex;gap:8px;margin-top:10px}
+  .gen-actions div{flex:1;text-align:center;border:1px solid var(--line);border-radius:4px;padding:7px;font-size:10px}
+  .gen-actions div.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* 学习计划 */
+  .task{display:flex;align-items:center;gap:9px;border-bottom:1px dashed var(--line);padding:9px 2px}
+  .task .cb{width:14px;height:14px;border:1.5px solid var(--line);border-radius:3px;flex:none}
+  .task.done .cb{background:var(--ink);border-color:var(--ink)}
+  .task .nm{font-size:12px;flex:1}
+  .task.done .nm{color:var(--muted);text-decoration:line-through}
+  .st{font-size:10px;padding:2px 8px;border:1px solid var(--line);border-radius:10px;color:var(--muted)}
+  .st.doing{border-color:var(--blue);color:var(--blue);background:var(--bluebg)}
+  .rule-note{font-size:10px;color:var(--blue);background:var(--bluebg);border:1px solid #cfe0f6;border-radius:4px;padding:6px 9px;margin-top:10px}
+
+  /* 答疑 */
+  .bubble{max-width:86%;border-radius:8px;padding:9px 11px;font-size:11px;margin-bottom:10px}
+  .bubble.u{background:var(--ink);color:#fff;margin-left:auto;border-bottom-right-radius:2px}
+  .bubble.a{background:#fff;border:1px solid var(--line);border-bottom-left-radius:2px}
+  .bubble .ln{background:var(--fill2);margin-bottom:5px}
+  .tags3{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+  .chip{font-size:10px;padding:3px 8px;border-radius:4px;border:1px dashed var(--dash);color:var(--muted)}
+  .chip.src{border-color:var(--blue);color:var(--blue);background:var(--bluebg);border-style:solid;cursor:pointer}
+  .src-expand{border-left:2px solid var(--blue);background:var(--bluebg);padding:8px 10px;font-size:10px;color:#4a5a6a;margin-top:7px;border-radius:0 4px 4px 0;line-height:1.6}
+  .qa-actions{display:flex;gap:6px;margin-top:4px}
+  .qa-actions div{font-size:10px;padding:5px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--muted)}
+  .chat-input{margin-top:12px;border:1px solid var(--line);border-radius:6px;background:#fff;height:38px;display:flex;align-items:center;padding:0 8px;gap:8px}
+  .chat-input .ph{flex:1;font-size:11px;color:var(--muted)}
+  .send{background:var(--ink);color:#fff;font-size:10px;border-radius:4px;padding:6px 12px}
+
+  /* 复习会话 */
+  .rv-mode{display:inline-block;font-size:10px;padding:3px 9px;border:1px solid var(--mark);color:var(--mark);background:var(--markbg);border-radius:4px;margin-bottom:10px}
+  .rv-q{border:1px solid var(--line);border-radius:6px;padding:12px;background:#fff;font-size:12px;margin-bottom:9px}
+  .rv-answer{border:1px dashed var(--line);border-radius:6px;padding:10px;background:#fafbfc;font-size:11px;color:var(--muted);margin-bottom:10px}
+  .rv-label{font-size:10px;color:var(--muted);margin-bottom:5px}
+  .rv-rates{display:flex;gap:6px}
+  .rv-rate{flex:1;text-align:center;border:1px solid var(--line);border-radius:5px;padding:8px 4px;font-size:10px;background:#fff}
+  .rv-rate.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .rv-next{border:1px dashed var(--line);border-radius:5px;padding:9px;font-size:10px;color:var(--muted);margin-top:10px;text-align:center;background:#fff}
+  .rv-done{background:var(--ink);color:#fff;text-align:center;padding:8px;font-size:11px;border-radius:5px;margin-top:10px}
+
+  /* 进度 */
+  .prog{margin-bottom:13px}
+  .prog .hd{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
+  .bar{height:9px;background:var(--fill2);border-radius:5px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--ink);border-radius:5px}
+  .bar.b i{background:var(--muted)}
+  .hist{border-top:1px dashed var(--line);padding-top:10px}
+  .hist .row{display:flex;gap:9px;align-items:center;padding:7px 0;font-size:11px;border-bottom:1px dashed var(--dash)}
+  .hist .dt{color:var(--muted);width:52px;flex:none}
+
+  /* 标注 / 旅程 / 跳转表 */
+  .notes{margin-top:12px;padding:12px 14px;background:var(--markbg);border:1px dashed #e6b3b3;border-radius:7px}
+  .notes h4{font-size:11px;color:var(--mark);margin-bottom:7px;letter-spacing:.5px}
+  .notes ol{list-style:none;display:flex;flex-direction:column;gap:5px}
+  .notes li{font-size:11px;color:#7a4b4b;display:flex;gap:8px;align-items:flex-start}
+  .badge{width:17px;height:17px;border-radius:50%;background:var(--mark);color:#fff;font-size:10px;flex:none;display:flex;align-items:center;justify-content:center}
+  .journey{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px;box-shadow:0 2px 10px rgba(30,40,60,.05);display:flex;align-items:stretch;gap:7px;flex-wrap:wrap}
+  .jstep{flex:1;min-width:112px;border:1px solid var(--line);border-radius:7px;padding:11px;background:#fbfcfd}
+  .jstep .jn{width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+  .jstep h5{font-size:12px;margin-bottom:4px}
+  .jstep p{font-size:10px;color:var(--muted)}
+  .jarrow{align-self:center;color:var(--line);font-size:17px}
+  .flow-wrap{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(30,40,60,.05)}
+  table.flow{width:100%;border-collapse:collapse;font-size:11px}
+  table.flow th,table.flow td{border-bottom:1px solid var(--line);padding:9px 13px;text-align:left}
+  table.flow th{background:#eef1f4;color:var(--muted);font-weight:600;font-size:10.5px;letter-spacing:.3px}
+  table.flow tr:last-child td{border-bottom:none}
+  table.flow td.st{color:var(--blue)}
+  .foot{text-align:center;color:var(--muted);font-size:11px;margin-top:28px}
+</style>
+</head>
+<body>
+<div class="board">
+
+  <div class="hero">
+    <h1>学习助手 · 产品原型设计</h1>
+    <div class="sub">低保真线框图 v2 · 补齐计划生成、统一导航、任务规则与复习闭环（用于方案讨论与开发交接）</div>
+    <div class="meta">
+      <span class="tag">阶段 <b>产品设计 / 原型（先于开发）</b></span>
+      <span class="tag">产出 <b>信息架构 + 6 页线框 + 交互标注 + 状态跳转表</b></span>
+      <span class="tag">风格 <b>低保真 · 灰阶占位</b></span>
+      <span class="tag">对应产品 <b>Multi-Agent 智能学习助手</b></span>
+    </div>
+  </div>
+
+  <!-- 1 信息架构 -->
+  <div class="sec-title"><span class="no">1</span><h2>信息架构与功能入口</h2><span class="desc">每个页面顶部均有统一导航，入口明确</span></div>
+  <div class="ia">
+    <div style="text-align:center"><div class="ia-root">首页 / 仪表盘</div></div>
+    <div class="ia-line"></div>
+    <div class="ia-row">
+      <div class="ia-node hot">学习计划<small>入口：导航「计划」/ 首页卡片<br>含「计划生成」子流程</small></div>
+      <div class="ia-node">概念答疑<small>入口：导航「答疑」/ 复习会话</small></div>
+      <div class="ia-node">学习资源<small>入口：导航「资源」/ 答疑来源引用</small></div>
+      <div class="ia-node">进度 / 历史<small>入口：导航「进度」/ 首页卡片</small></div>
+      <div class="ia-node hot">复习提醒<small>入口：导航「复习」/ 首页待复习卡<br>含「复习会话」子流程</small></div>
+    </div>
+    <div class="ia-entry">
+      <b>统一导航（每页顶部）</b>：首页 ｜ 计划 ｜ 答疑 ｜ 资源 ｜ 进度 ｜ 复习　—— 解决"学习资源 / 复习提醒从哪进"的问题。<br>
+      <b>主流程闭环</b>：设定目标 → 生成并确认计划 → 学习 / 答疑 → 勾选完成任务 → 到期开始复习 → 记录掌握度 → 安排下次复习 → 回到答疑。
+    </div>
+  </div>
+
+  <!-- 2 核心页面 -->
+  <div class="sec-title"><span class="no">2</span><h2>核心页面线框（6 页）</h2><span class="desc">灰块=文字占位；虚线框=待定；编号标注对应具体控件</span></div>
+  <div class="grid">
+
+    <!-- P01 首页 -->
+    <div class="frame">
+      <div class="frame-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">首页 / 仪表盘</span><span class="pno">PAGE 01</span></div>
+      <div class="ui">
+        <div class="ui-top"><div class="logo"><span class="sq"></span>学习助手</div><div class="avatar"></div></div>
+        <div class="gnav"><span class="on">首页</span><span>计划</span><span>答疑</span><span>资源</span><span>进度</span><span>复习</span></div>
+        <div class="notice"><span class="bell"></span><span>待复习提醒：你有 2 项复习到期 →</span></div>
+        <div class="kpis">
+          <div class="kpi"><div class="ic"></div><div class="v">3</div><div class="t">活跃计划</div></div>
+          <div class="kpi"><div class="ic"></div><div class="v">8</div><div class="t">完成任务</div></div>
+          <div class="kpi"><div class="ic"></div><div class="v">5h</div><div class="t">学习时长</div></div>
+          <div class="kpi"><div class="ic"></div><div class="v">2</div><div class="t">待复习</div></div>
+        </div>
+        <div class="cards2">
+          <div class="mini"><div class="ln m"></div><div class="ln s"></div><div class="btn-wire">开始复习 →</div></div>
+          <div class="mini"><div class="ln m"></div><div class="ln s"></div><div class="btn-wire">开始复习 →</div></div>
+        </div>
+      </div>
+      <div class="notes"><h4>交互标注</h4><ol>
+        <li><span class="badge">1</span>顶部导航「复习」/ 待复习卡「开始复习」→ 进入复习会话页（P05）。</li>
+        <li><span class="badge">2</span>数据卡「活跃计划 / 完成任务」→ 分别进计划页（P03）/ 进度页（P06）。</li>
+      </ol></div>
+    </div>
+
+    <!-- P02 计划生成（新增） -->
+    <div class="frame">
+      <div class="frame-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">计划生成（核心流程·新增）</span><span class="pno">PAGE 02</span></div>
+      <div class="ui">
+        <div class="ui-top"><div class="logo"><span class="sq"></span>生成学习计划</div><div class="avatar"></div></div>
+        <div class="gnav"><span>首页</span><span class="on">计划</span><span>答疑</span><span>资源</span><span>进度</span><span>复习</span></div>
+        <div class="gen-field"><div class="gen-label">学习目标</div><div class="gen-input">学完操作系统</div></div>
+        <div class="gen-field"><div class="gen-label">学习周期</div><div class="gen-opts"><span class="gen-opt">4 周</span><span class="gen-opt on">6 周</span><span class="gen-opt">8 周</span><span class="gen-opt">12 周</span></div></div>
+        <div class="gen-field"><div class="gen-label">每日可投入</div><div class="gen-opts"><span class="gen-opt">1 小时</span><span class="gen-opt on">2 小时</span><span class="gen-opt">3 小时</span></div></div>
+        <div class="gen-btn">生成计划 →</div>
+        <div class="gen-progress">规划 Agent 正在拆解任务…（生成中状态）</div>
+        <div class="gen-preview">
+          <div class="pt">生成结果预览 · 第 1 周（可修改）</div>
+          <div class="gen-row">进程调度 <span class="ed">编辑 / 删除</span></div>
+          <div class="gen-row">内存管理 <span class="ed">编辑 / 删除</span></div>
+          <div class="gen-row">文件系统 <span class="ed">编辑 / 删除</span></div>
+          <div class="gen-actions"><div class="pri">确认并保存</div><div>重新生成</div></div>
+        </div>
+      </div>
+      <div class="notes"><h4>交互标注</h4><ol>
+        <li><span class="badge">3</span>填目标 + 选周期/时长 → 点「生成计划」→ 展示生成中状态 → 出预览。</li>
+        <li><span class="badge">4</span>预览可「编辑 / 删除 / 重新生成」；点「确认并保存」→ 写入计划页（P03）。</li>
+      </ol></div>
+    </div>
+
+    <!-- P03 学习计划 -->
+    <div class="frame">
+      <div class="frame-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">学习计划</span><span class="pno">PAGE 03</span></div>
+      <div class="ui">
+        <div class="ui-top"><div class="logo"><span class="sq"></span>学习计划</div><div class="avatar"></div></div>
+        <div class="gnav"><span>首页</span><span class="on">计划</span><span>答疑</span><span>资源</span><span>进度</span><span>复习</span></div>
+        <div class="gen-opts" style="margin-bottom:10px"><span class="week gen-opt on">第1周</span><span class="week gen-opt">第2周</span><span class="week gen-opt">第3周</span><span class="week gen-opt">第4周</span></div>
+        <div class="task done"><span class="cb"></span><span class="nm">进程调度</span><span class="st">已完成</span></div>
+        <div class="task"><span class="cb"></span><span class="nm">内存管理</span><span class="st doing">进行中</span></div>
+        <div class="task"><span class="cb"></span><span class="nm">文件系统</span><span class="st">未开始</span></div>
+        <div class="task"><span class="cb"></span><span class="nm">I/O 管理</span><span class="st">未开始</span></div>
+        <div class="row-btns" style="margin-top:12px"><div class="btn-wire" style="display:inline-block;padding:7px 14px">+ 新增任务</div></div>
+        <div class="rule-note">完成规则：勾选任务左侧复选框即标记完成（唯一完成入口），进度实时同步至 P06。</div>
+      </div>
+      <div class="notes"><h4>交互标注</h4><ol>
+        <li><span class="badge">5</span>勾选复选框 → 标记完成并实时更新进度页；无"标记完成"按钮，避免双入口歧义。</li>
+        <li><span class="badge">6</span>切换周标签 → 展示对应周任务；「+ 新增任务」→ 手动补充。</li>
+      </ol></div>
+    </div>
+
+    <!-- P04 答疑 -->
+    <div class="frame">
+      <div class="frame-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">概念答疑</span><span class="pno">PAGE 04</span></div>
+      <div class="ui">
+        <div class="ui-top"><div class="logo"><span class="sq"></span>概念答疑</div><div class="avatar"></div></div>
+        <div class="gnav"><span>首页</span><span>计划</span><span class="on">答疑</span><span>资源</span><span>进度</span><span>复习</span></div>
+        <div class="bubble u">虚拟内存是什么？</div>
+        <div class="bubble a">
+          <div class="ln l"></div><div class="ln l"></div><div class="ln m"></div>
+          <div class="tags3">
+            <span class="chip src">📎 来源：操作系统笔记.md ▸</span>
+            <span class="chip">⚠ 常见误区</span>
+          </div>
+          <div class="src-expand">原文摘录：「虚拟内存是一种内存管理技术，为每个进程提供独立的地址空间……」<br>（点击来源 chip 展开/收起原文，可跳转资源页 P-资源）</div>
+        </div>
+        <div class="qa-actions"><div>换种讲法</div><div>标记已解决</div></div>
+        <div class="chat-input"><span class="ph">输入你的问题…</span><span class="send">发送</span></div>
+      </div>
+      <div class="notes"><h4>交互标注</h4><ol>
+        <li><span class="badge">7</span>点来源 chip ▸ → 展开原文摘录（示意可溯源），可跳资源页查看完整资料。</li>
+        <li><span class="badge">8</span>点「换种讲法」→ 同一问题换表述重答（多轮上下文保留）。</li>
+      </ol></div>
+    </div>
+
+    <!-- P05 复习会话（新增） -->
+    <div class="frame">
+      <div class="frame-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">复习会话（闭环·新增）</span><span class="pno">PAGE 05</span></div>
+      <div class="ui">
+        <div class="ui-top"><div class="logo"><span class="sq"></span>复习会话</div><div class="avatar"></div></div>
+        <div class="gnav"><span>首页</span><span>计划</span><span>答疑</span><span>资源</span><span>进度</span><span class="on">复习</span></div>
+        <div class="rv-mode">复习模式 · 进程调度 · 第 2 次复习</div>
+        <div class="rv-q">请回忆：进程调度有哪些常见算法，各自适用场景？</div>
+        <div class="rv-answer">答案区（点「显示答案」后展开）：FCFS / SJF / 时间片轮转 / 优先级 / 多级反馈队列……</div>
+        <div class="rv-label">自我评估掌握程度（三选一）</div>
+        <div class="rv-rates"><div class="rv-rate sel">记得</div><div class="rv-rate">模糊</div><div class="rv-rate">忘了</div></div>
+        <div class="rv-next">系统据掌握度安排下次复习：11-15（间隔 4 天，遵循艾宾浩斯）</div>
+        <div class="rv-done">结束复习 → 返回首页并更新待复习数</div>
+      </div>
+      <div class="notes"><h4>交互标注</h4><ol>
+        <li><span class="badge">9</span>答完点「显示答案」→ 自评「记得/模糊/忘了」→ 系统安排下次复习日期。</li>
+        <li><span class="badge">10</span>点「结束复习」→ 回首页，待复习数 -1；"忘了"则缩短间隔、"记得"则拉长。</li>
+      </ol></div>
+    </div>
+
+    <!-- P06 进度 -->
+    <div class="frame">
+      <div class="frame-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">进度 / 历史</span><span class="pno">PAGE 06</span></div>
+      <div class="ui">
+        <div class="ui-top"><div class="logo"><span class="sq"></span>学习进度</div><div class="avatar"></div></div>
+        <div class="gnav"><span>首页</span><span>计划</span><span>答疑</span><span>资源</span><span class="on">进度</span><span>复习</span></div>
+        <div class="prog"><div class="hd"><span>操作系统</span><span>6/8 · 75%</span></div><div class="bar"><i style="width:75%"></i></div></div>
+        <div class="prog"><div class="hd"><span>计算机网络</span><span>2/5 · 40%</span></div><div class="bar b"><i style="width:40%"></i></div></div>
+        <div class="prog"><div class="hd"><span>数据结构</span><span>1/6 · 17%</span></div><div class="bar b"><i style="width:17%"></i></div></div>
+        <div class="hist">
+          <div class="ln m" style="margin-bottom:8px"></div>
+          <div class="row"><span class="dt">11-10</span><span>学完 · 进程调度</span></div>
+          <div class="row"><span class="dt">11-09</span><span>答疑 · 虚拟内存</span></div>
+          <div class="row"><span class="dt">11-08</span><span>复习 · 时间片轮转（记得）</span></div>
+        </div>
+      </div>
+      <div class="notes"><h4>交互标注</h4><ol>
+        <li><span class="badge">11</span>进度条由计划页勾选状态实时聚合，与 P03 双向同步。</li>
+        <li><span class="badge">12</span>历史记录含复习掌握度，点击回看当时答疑 / 复习内容。</li>
+      </ol></div>
+    </div>
+
+  </div>
+
+  <!-- 3 用户旅程 -->
+  <div class="sec-title"><span class="no">3</span><h2>核心用户旅程（完整闭环）</h2><span class="desc">从设定目标到复习安排，闭环可讲</span></div>
+  <div class="journey">
+    <div class="jstep"><div class="jn">1</div><h5>设定目标</h5><p>输入"学完操作系统"</p></div><span class="jarrow">→</span>
+    <div class="jstep"><div class="jn">2</div><h5>生成计划</h5><p>选周期 → 生成 → 确认/修改</p></div><span class="jarrow">→</span>
+    <div class="jstep"><div class="jn">3</div><h5>学习答疑</h5><p>RAG + 来源 + 换种讲法</p></div><span class="jarrow">→</span>
+    <div class="jstep"><div class="jn">4</div><h5>勾选完成</h5><p>更新进度，聚合完成率</p></div><span class="jarrow">→</span>
+    <div class="jstep"><div class="jn">5</div><h5>开始复习</h5><p>到期提醒 → 复习会话</p></div><span class="jarrow">→</span>
+    <div class="jstep"><div class="jn">6</div><h5>记录掌握度</h5><p>记得/模糊/忘了 → 安排下次</p></div>
+  </div>
+
+  <!-- 4 状态与跳转 -->
+  <div class="sec-title"><span class="no">4</span><h2>页面状态与跳转（开发交接依据）</h2><span class="desc">静态线框的交互以状态说明表达，供后续开发实现</span></div>
+  <div class="flow-wrap">
+    <table class="flow">
+      <thead><tr><th style="width:18%">页面</th><th style="width:26%">状态</th><th style="width:30%">触发操作</th><th style="width:26%">跳转 / 结果</th></tr></thead>
+      <tbody>
+        <tr><td>P01 首页</td><td class="st">默认 / 有待复习</td><td>点导航或待复习卡"开始复习"</td><td>→ P05 复习会话</td></tr>
+        <tr><td>P02 计划生成</td><td class="st">输入态 / 生成中 / 预览态</td><td>填目标选周期 → 生成 → 确认</td><td>→ P03 学习计划（写入任务）</td></tr>
+        <tr><td>P02 计划生成</td><td class="st">预览态</td><td>点"重新生成 / 编辑"</td><td>停留预览态，刷新结果</td></tr>
+        <tr><td>P03 学习计划</td><td class="st">周视图 / 任务列表</td><td>勾选任务复选框</td><td>状态变"已完成" → 同步 P06</td></tr>
+        <tr><td>P04 答疑</td><td class="st">对话中 / 来源展开</td><td>点来源 chip / "换种讲法"</td><td>展开原文 / 重答（上下文保留）</td></tr>
+        <tr><td>P05 复习会话</td><td class="st">答题 → 答案 → 自评 → 已安排</td><td>显示答案 → 选掌握度 → 结束</td><td>→ P01（待复习数 -1，排下次）</td></tr>
+        <tr><td>P06 进度</td><td class="st">各科目进度 / 历史</td><td>点历史记录</td><td>回看对应答疑 / 复习内容</td></tr>
+        <tr><td>全页通用</td><td class="st">顶部导航常驻</td><td>点"资源 / 复习"等</td><td>跳转对应页，入口统一</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="foot">学习助手 · 产品设计阶段产出 · 低保真线框 v2（可打印 / 可截图用于作品集）</div>
+</div>
+</body>
+</html>
