@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>知栈 · 学习工作台</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260309-19">
+    <link rel="stylesheet" href="/static/styles.css?v=20261127-plan-input-1">
     <link rel="stylesheet" href="/static/icons.css?v=20260309-19">
     <script>
         (() => {
@@ -220,7 +220,7 @@
                                         <h2 class="chat-welcome-title">今天想学点什么？</h2>
                                         <p class="chat-welcome-desc">提问、制定计划或复习知识点，从一句话开始。</p>
                                         <div class="chat-welcome-chips">
-                                            <button type="button" class="welcome-chip" onclick="prefillChatInput('帮我制定本周的学习计划')"><i class="fas fa-calendar-check"></i><span>制定学习计划</span></button>
+                                            <button type="button" class="welcome-chip" onclick="showPlanInputGuide()"><i class="fas fa-calendar-check"></i><span>制定学习计划</span></button>
                                             <button type="button" class="welcome-chip" onclick="prefillChatInput('帮我复习最近学过的内容')"><i class="fas fa-redo-alt"></i><span>复习最近内容</span></button>
                                             <button type="button" class="welcome-chip" onclick="prefillChatInput('推荐一些适合入门的资料')"><i class="fas fa-book-open"></i><span>推荐学习资料</span></button>
                                         </div>
@@ -229,6 +229,20 @@
                                 </div>
                             </div>
                             <div class="chat-composer">
+                                <div id="planInputGuide" class="plan-input-guide" aria-label="学习计划输入提示" hidden>
+                                    <div class="plan-guide-content">
+                                        <strong>说出你想学什么，不需要固定格式</strong>
+                                        <p>可以按需补充这些信息，点选后会加入输入框，仍可自由修改：</p>
+                                        <div class="plan-guide-fields" aria-label="计划信息快捷提示">
+                                            <button type="button" onclick="insertPlanField('topic')">学习主题</button>
+                                            <button type="button" onclick="insertPlanField('goal')">目标</button>
+                                            <button type="button" onclick="insertPlanField('duration')">周期</button>
+                                            <button type="button" onclick="insertPlanField('daily')">每天时间</button>
+                                        </div>
+                                        <p class="plan-guide-example">例如：我想在两周内入门 RAG，每天能学 45 分钟，目标是做出一个简单问答应用。<button type="button" onclick="prefillPlanExample()">填入示例</button></p>
+                                    </div>
+                                    <button type="button" class="plan-guide-close" onclick="hidePlanInputGuide()" aria-label="关闭输入提示">×</button>
+                                </div>
                                 <div id="imagePreviewContainer" class="image-preview" style="display:none">
                                     <img id="imagePreview" src="" alt="图片预览">
                                     <button class="image-preview-remove" onclick="clearImage()" aria-label="清除图片" title="移除图片">&times;</button>
@@ -697,6 +711,6 @@
             }
         })();
     </script>
-    <script src="/static/app.js?v=20261126-technical-3"></script>
+    <script src="/static/app.js?v=20261127-plan-input-1"></script>
 </body>
 </html>

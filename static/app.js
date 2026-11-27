@@ -1,4 +1,4 @@
-﻿// 番茄钟变量
+// 番茄钟变量
 let pomodoroTimer = null;
 let pomodoroTimeLeft = 25 * 60;
 let pomodoroIsRunning = false;
@@ -354,6 +354,61 @@ function prefillChatInput(text) {
     } catch (e) {}
 }
 
+// 计划入口只给填写引导，由用户决定是否发送；主题和时间均可修改。
+function showPlanInputGuide() {
+    if (typeof switchPage === 'function') switchPage('chat');
+    const guide = document.getElementById('planInputGuide');
+    if (guide) guide.hidden = false;
+    const input = document.getElementById('userInput');
+    if (input) {
+        input.placeholder = '例如：我想两周内入门 RAG，每天学 45 分钟，做一个问答应用';
+        input.focus();
+    }
+}
+
+function hidePlanInputGuide() {
+    const guide = document.getElementById('planInputGuide');
+    if (guide) guide.hidden = true;
+    const input = document.getElementById('userInput');
+    if (input) input.placeholder = '输入您的问题或需求...';
+}
+
+function prefillPlanExample() {
+    prefillChatInput('我想在两周内入门 RAG，每天能学 45 分钟，目标是做出一个简单问答应用。');
+}
+
+// 快捷提示只插入可编辑的字段名，不预设用户的学习内容，也不自动发送。
+function insertPlanField(field) {
+    const labels = {
+        topic: '学习主题：',
+        goal: '目标：',
+        duration: '周期：',
+        daily: '每天时间：'
+    };
+    const label = labels[field];
+    const input = document.getElementById('userInput');
+    if (!label || !input) return;
+
+    const value = input.value;
+    const existing = value.indexOf(label);
+    if (existing !== -1) {
+        input.focus();
+        input.setSelectionRange(existing + label.length, existing + label.length);
+        return;
+    }
+
+    const start = input.selectionStart ?? value.length;
+    const end = input.selectionEnd ?? value.length;
+    const before = value.slice(0, start);
+    const after = value.slice(end);
+    const prefix = before && !/[\s，。；;]$/.test(before) ? '；' : '';
+    const suffix = after && !/^[\s，。；;]/.test(after) ? '；' : '';
+    input.value = before + prefix + label + suffix + after;
+    const cursor = (before + prefix + label).length;
+    input.focus();
+    input.setSelectionRange(cursor, cursor);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+}
 // 添加消息到聊天容器
 function addMessage(content, isUser) {
     const chatContainer = document.getElementById('chatContainer');
@@ -963,6 +1018,8 @@ async function sendMessage(action = null, options = {}) {
         // showError('请输入问题');
         return;
     }
+
+    hidePlanInputGuide();
 
     // 开始对话后不再展示欢迎空状态（动作类消息没有气泡）
     hideChatWelcome();
@@ -3305,8 +3362,7 @@ function loadNotes() {
 
 // 创建新计划
 function createNewPlan() {
-    switchPage('chat');
-    sendQuickMessage('请帮我制定一个新的学习计划');
+    showPlanInputGuide();
 }
 
 // 查看计划详情
@@ -4492,6 +4548,7 @@ async function createNewConversation() {
         
         // 清空聊天容器，回到新会话欢迎空状态
         resetChatToWelcome();
+        hidePlanInputGuide();
         const input = document.getElementById('userInput');
         if (input) input.focus();
         
@@ -5660,6 +5717,7 @@ async function viewUserStats(userId, account) {
 
 // 在switchPage函数中添加测验和复习页面的加载逻辑
 function switchPage(pageId) {
+    if (pageId !== 'chat') hidePlanInputGuide();
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
     });

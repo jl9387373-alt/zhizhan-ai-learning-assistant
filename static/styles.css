@@ -4881,3 +4881,49 @@ body {
 .source-content { color: #5F5F82; }
 
 .plan-save-status { min-height: 1.4em; margin: 6px 0 0; color: var(--text-light); font-size: .9em; }
+
+.plan-input-guide {
+    max-width: 880px;
+    margin: 0 auto 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: var(--text-color);
+    background: var(--primary-soft);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 13px;
+}
+.plan-input-guide[hidden] { display: none; }
+.plan-guide-content { flex: 1; min-width: 0; }
+.plan-guide-content strong { display: block; font-size: 13px; line-height: 1.5; }
+.plan-guide-content p { margin: 3px 0 0; color: var(--text-light); line-height: 1.5; }
+.plan-guide-fields { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.plan-input-guide button { flex: 0 0 auto; cursor: pointer; font: inherit; }
+.plan-guide-fields button {
+    padding: 5px 9px;
+    color: var(--primary-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-weight: 600;
+}
+.plan-guide-fields button:hover { border-color: var(--primary-color); }
+.plan-guide-example { margin-top: 9px !important; }
+.plan-guide-example button {
+    margin-left: 6px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--primary-color);
+    font-weight: 700;
+    white-space: nowrap;
+}
+.plan-input-guide button:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+.plan-input-guide .plan-guide-close { padding: 0 2px; border: 0; background: transparent; color: var(--text-light); font-size: 18px; line-height: 1; }
+@media (max-width: 600px) {
+    .plan-input-guide { margin: 0 8px 10px; }
+    .plan-guide-fields { gap: 6px; }
+    .plan-guide-fields button { padding: 5px 7px; }
+}
